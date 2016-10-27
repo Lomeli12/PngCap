@@ -56,14 +56,23 @@ namespace PngCap {
             notifyIcon = new NotifyIcon();
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += IconDoubleClick;
+            notifyIcon.BalloonTipClicked += openClick;
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(PngCap));
             notifyIcon.Icon = (Icon)resources.GetObject("$this.Icon");
-            notifyIcon.Text = "PngCap\nDouble-Click to close.";
+            notifyIcon.Text = "PngCap\nDouble-Click to open screenshot folder.";
             
-            notifyMenu = new ContextMenu(standardItems());
+            notifyMenu = new ContextMenu();
+            setupContextMenu();
+            notifyIcon.ContextMenu = notifyMenu;
+        }
+            
+        static void setupContextMenu() {
+            notifyMenu.MenuItems.Add(new MenuItem("Use 24-Hour Format", new EventHandler(enable24Hours)));
+            notifyMenu.MenuItems.Add(new MenuItem("Disable Notification", new EventHandler(showNotification)));
+            notifyMenu.MenuItems.Add("-");
+            notifyMenu.MenuItems.Add(new MenuItem("Exit", new EventHandler(closeApp)));
             notifyMenu.MenuItems[0].Checked = use24hour;
             notifyMenu.MenuItems[1].Checked = notification;
-            notifyIcon.ContextMenu = notifyMenu;
         }
         
         static void keyHandler(object sender, KeyEventArgs e) {
@@ -83,14 +92,11 @@ namespace PngCap {
             return use24hour ? string.Format("Screenshot_{0:yyyy-MM-dd_HH-mm-ss}.png", DateTime.Now) : string.Format("Screenshot_{0:yyyy-MM-dd_hh-mm-ss-tt}.png", DateTime.Now);
         }
         
-        static MenuItem[] standardItems() {
-            return new MenuItem[] { 
-                new MenuItem("Use 24-Hour Format", new EventHandler(enable24Hours)),
-                new MenuItem("Disable Notification", new EventHandler(showNotification)) 
-            };
-        }
-       
         static void IconDoubleClick(object sender, EventArgs e) {
+            Process.Start(SCREENSHOT_FOLDER);
+        }
+        
+        static void closeApp(object sender, EventArgs e) {
             Application.Exit();
         }
        
