@@ -80,7 +80,7 @@ namespace PngCap {
         }
         
         static string getTimeStampFileName() {
-            return use24hour ? string.Format("ScreenShot-{0:yyyy-MM-dd_HH-mm-ss}.png", DateTime.Now) : string.Format("ScreenShot-{0:yyyy-MM-dd_hh-mm-ss-tt}.png", DateTime.Now);
+            return use24hour ? string.Format("Screenshot_{0:yyyy-MM-dd_HH-mm-ss}.png", DateTime.Now) : string.Format("Screenshot_{0:yyyy-MM-dd_hh-mm-ss-tt}.png", DateTime.Now);
         }
         
         static MenuItem[] standardItems() {
