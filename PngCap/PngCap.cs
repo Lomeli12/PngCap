@@ -2,8 +2,10 @@
 using System.IO;
 using System.Drawing;
 using System.Threading;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 using Utilities;
 
 namespace PngCap {
@@ -12,6 +14,8 @@ namespace PngCap {
         static readonly string SCREENSHOT_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "/ScreenShots";
         static readonly string CONFIG_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/" + TITLE;
         static readonly string CONFIG_FILE = CONFIG_FOLDER + "/config.cfg";
+        static readonly Regex CLEAN_UP_REGEX = new Regex(@"[\\/]+", RegexOptions.Compiled);
+        static string lastFile;
         static bool use24hour, notification;
         static NotifyIcon notifyIcon;
         static ContextMenu notifyMenu;
@@ -66,8 +70,12 @@ namespace PngCap {
             if (e.KeyCode == Keys.PrintScreen && Clipboard.ContainsImage()) {
                 if (!Directory.Exists(SCREENSHOT_FOLDER)) Directory.CreateDirectory(SCREENSHOT_FOLDER);
                 var name = getTimeStampFileName();
-                Clipboard.GetImage().Save(SCREENSHOT_FOLDER + "/" + name, ImageFormat.Png);
-                if (!notification) displayNotification(TITLE, "Saved screenshot as", name);
+                var fileName = SCREENSHOT_FOLDER + "/" + name;
+                Clipboard.GetImage().Save(fileName, ImageFormat.Png);
+                if (!notification) {
+                    lastFile = fileName;
+                    displayNotification(TITLE, "Saved screenshot as", name, "Click to open folder.");
+                }
             }
         }
         
@@ -98,14 +106,30 @@ namespace PngCap {
             config.setBool("disableNotification", notification);
         }
         
-        static void displayNotification(string title, string mainLine, string second) {
-            var notify = new NotifyIcon();
-            notify.Visible = true;
-            notify.BalloonTipTitle = title;
-            notify.BalloonTipText = string.Format("{0}\n{1}", mainLine, second);
-            notify.Icon = notifyIcon.Icon;
-            notify.ShowBalloonTip(5);
-            notify.Dispose();
+        static void displayNotification(string title, params string[] message) {
+            if (string.IsNullOrEmpty(title) || message == null || message.Length < 1) return;
+            var msg = "";
+            for (int i = 0; i < message.Length; i++) {
+                msg += message[i];
+                if (i != (message.Length - 1)) msg += "\n";
+            }
+            if (string.IsNullOrEmpty(msg)) return;
+            
+            notifyIcon.BalloonTipTitle = title;
+            notifyIcon.BalloonTipText = msg;
+            notifyIcon.ShowBalloonTip(5);
+        }
+        
+        static void openClick(object sender, EventArgs e) {
+            if (string.IsNullOrEmpty(lastFile)) return;
+            browseToFile(lastFile);
+            lastFile = null;
+        }
+        
+        static void browseToFile(string file) {
+            if (!File.Exists(lastFile)) return;
+            var cleanPath = CLEAN_UP_REGEX.Replace(file, @"\");
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\"", cleanPath));
         }
     }
 }
