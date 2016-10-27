@@ -11,9 +11,12 @@ using Utilities;
 namespace PngCap {
     public sealed class PngCap {
         static readonly string TITLE = "PngCap";
+        static readonly string VERSION = "1.0.1";
         static readonly string SCREENSHOT_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "/ScreenShots";
         static readonly string CONFIG_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/" + TITLE;
         static readonly string CONFIG_FILE = CONFIG_FOLDER + "/config.cfg";
+        public static readonly string HOMEPAGE = "https://lomeli12.net/";
+        public static readonly string ABOUT = string.Format("{0} v{1}\nCopyright © 2016 Anthony Lomeli\n{2}", TITLE, VERSION, HOMEPAGE);
         static readonly Regex CLEAN_UP_REGEX = new Regex(@"[\\/]+", RegexOptions.Compiled);
         static string lastFile;
         static bool use24hour, notification;
@@ -70,6 +73,7 @@ namespace PngCap {
             notifyMenu.MenuItems.Add(new MenuItem("Use 24-Hour Format", new EventHandler(enable24Hours)));
             notifyMenu.MenuItems.Add(new MenuItem("Disable Notification", new EventHandler(showNotification)));
             notifyMenu.MenuItems.Add("-");
+            notifyMenu.MenuItems.Add(new MenuItem("About", new EventHandler(aboutClick)));
             notifyMenu.MenuItems.Add(new MenuItem("Exit", new EventHandler(closeApp)));
             notifyMenu.MenuItems[0].Checked = use24hour;
             notifyMenu.MenuItems[1].Checked = notification;
@@ -98,6 +102,12 @@ namespace PngCap {
         
         static void closeApp(object sender, EventArgs e) {
             Application.Exit();
+        }
+        
+        static void aboutClick(object sender, EventArgs e) {
+            var about = new About();
+            about.ShowDialog();
+            about.Dispose();
         }
        
         static void enable24Hours(object sender, EventArgs e) {

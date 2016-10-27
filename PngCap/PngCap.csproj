@@ -56,12 +56,19 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.cs" />
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="GlobalKeyboardHook.cs" />
     <Compile Include="PngCap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PngCap.resx">
       <DependentUpon>PngCap.cs</DependentUpon>
     </EmbeddedResource>
