@@ -46,7 +46,7 @@ namespace PngCap {
         
         static void setupGlobalHooks() {
             ghook = new GlobalKeyboardHook();
-            ghook.KeyUp += new KeyEventHandler(keyHandler);
+            ghook.KeyUp += keyHandler;
             ghook.HookedKeys.Add(Keys.PrintScreen);
         }
         
