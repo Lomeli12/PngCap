@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
+using Microsoft.Win32;
 using Utilities;
 
 namespace PngCap {
@@ -36,6 +37,7 @@ namespace PngCap {
                     loadConfig();
                     setupGlobalHooks();
                     setupTrayIcon();
+                    SystemEvents.PowerModeChanged += powerModeChange;
                     Application.Run();
                     notifyIcon.Dispose();
                 } else MessageBox.Show("PngCap is already running!");
@@ -146,6 +148,11 @@ namespace PngCap {
             if (!File.Exists(lastFile)) return;
             var cleanPath = CLEAN_UP_REGEX.Replace(file, @"\");
             Process.Start("explorer.exe", string.Format("/select,\"{0}\"", cleanPath));
+        }
+        
+        static void powerModeChange(object sender, PowerModeChangedEventArgs e) {
+            if (e.Mode == PowerModes.Suspend) ghook.unhook();
+            else if (e.Mode == PowerModes.Resume) ghook.hook();
         }
     }
 }
