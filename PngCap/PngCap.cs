@@ -12,7 +12,7 @@ using Utilities;
 namespace PngCap {
     public sealed class PngCap {
         static readonly string TITLE = "PngCap";
-        static readonly string VERSION = "1.0.1";
+        static readonly string VERSION = "1.0.2";
         static readonly string SCREENSHOT_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "/ScreenShots";
         static readonly string CONFIG_FOLDER = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/" + TITLE;
         static readonly string CONFIG_FILE = CONFIG_FOLDER + "/config.cfg";
